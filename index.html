@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Chekri Gadhiraju</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Chekri Gadhiraju — Senior Automation Engineer for GMP pharmaceutical manufacturing, now building with AI and Python.">
+<meta name="description" content="Chekri Gadhiraju: industrial automation for GMP pharmaceutical manufacturing, plus Python and AI tools.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -57,6 +57,7 @@ h1 span { display: block; color: var(--accent); }
 /* experience */
 .jobs { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); display: grid; gap: 2.25rem; }
 .jobs > li { position: relative; padding-left: 1.6rem; }
+.jobs h3 + .where { margin-top: 0.25rem; max-width: 65ch; }
 .jobs > li::before { content: ""; position: absolute; left: -7px; top: 0.4rem; width: 12px; height: 12px; border-radius: 50%;
   background: var(--bg); border: 2px solid var(--accent); }
 .jobs > li.now::before { background: var(--accent); }
@@ -108,76 +109,40 @@ footer { font: 0.8rem var(--mono); color: var(--muted); border-top: 1px solid va
   <header>
     <div class="tag"><b>PLC</b> → <b>SCADA</b> → <b>MES</b> → <b>AI</b></div>
     <h1>Chekri <span>Gadhiraju</span></h1>
-    <p class="role">Senior Automation Engineer · GMP Pharmaceutical Manufacturing</p>
-    <p class="intro">About 9 years keeping aseptic production lines running, from wash and sterilization to filling and inspection, on Siemens PLC and WinCC Unified systems built to 21 CFR Part 11. I'm now bringing that same discipline to Python and AI.</p>
-    <div class="status"><i aria-hidden="true"></i> Open to automation &amp; digital manufacturing roles</div>
+    <p class="role">Industrial automation for GMP pharmaceutical manufacturing</p>
+    <p class="intro">I keep aseptic production lines running reliably, compliantly and audit-ready, from wash and sterilization through filling and inspection. Now I'm adding Python and AI so plant data can do more of the work.</p>
+    <div class="status"><i aria-hidden="true"></i> Open to automation &amp; digital manufacturing work</div>
   </header>
 
-  <section aria-label="At a glance" class="kpis">
-    <div><b>~9 yrs</b><span>GMP automation</span></div>
-    <div><b>5</b><span>pharma sites</span></div>
-    <div><b>S7-1500</b><span>core PLC platform</span></div>
+  <section aria-label="Focus areas" class="kpis">
+    <div><b>Aseptic</b><span>filling &amp; inspection</span></div>
+    <div><b>S7-1500</b><span>PLC logic</span></div>
+    <div><b>WinCC</b><span>Unified SCADA/HMI</span></div>
     <div><b>Part 11</b><span>audit-ready systems</span></div>
   </section>
 
-  <section aria-labelledby="exp">
-    <p class="label" id="exp">Experience</p>
+  <section aria-labelledby="help">
+    <p class="label" id="help">How I can help</p>
+    <div class="racks">
+      <div class="rack"><h3>Get lines back up fast</h3><p>I trace downtime through PLC diagnostics, SCADA alarms and historian trends to the real root cause, and fix it so it doesn't come back.</p></div>
+      <div class="rack"><h3>Make alarms mean something</h3><p>Alarm rationalization that removes nuisance alarms, so operators see what matters and respond faster.</p></div>
+      <div class="rack"><h3>Stay audit-ready</h3><p>Change control, CSV and IQ/OQ, access reviews and traceable records aligned with 21 CFR Part 11, GAMP 5 and ALCOA+.</p></div>
+      <div class="rack"><h3>Connect floor to IT</h3><p>OPC UA, Profinet, MES/EBR and historian interfaces, with secure, segmented automation networks.</p></div>
+      <div class="rack"><h3>Deliver projects end to end</h3><p>From URS/FRS/SDS through FAT/SAT with OEMs to qualification, planned around production windows.</p></div>
+      <div class="rack learning"><h3>Bring AI to plant data</h3><p>Python tools that turn alarm logs and process data into clear, actionable insight.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="wins">
+    <p class="label" id="wins">Wins</p>
     <ol class="jobs">
-      <li class="now">
-        <div class="when">May 2026 – Present</div>
-        <h3>Senior Automation Engineer</h3>
-        <div class="where">OneUS Technologies · Client: Novo Nordisk · Clayton, NC</div>
-        <ul>
-          <li>On the IT/OT team for FFEX (Fill/Finish Expansion), which is building new aseptic vial-filling capacity at the Clayton site.</li>
-          <li>Works between the control-system layer (PLC, SCADA) and the plant IT network so automation systems connect correctly and meet GMP requirements before the first batch.</li>
-        </ul>
-        <ul class="sys"><li>IT/OT integration</li><li>PLC · SCADA</li><li>Aseptic vial filling</li><li>GMP</li></ul>
-      </li>
-      <li>
-        <div class="when">Aug 2024 – May 2026</div>
-        <h3>Senior Automation Engineer</h3>
-        <div class="where">Client: Gilead Sciences · Foster City, CA</div>
-        <ul>
-          <li>Automation lead for aseptic production areas, owning PLC/SCADA deliverables across wash and sterilization, filling, inspection and clean utilities.</li>
-          <li>Improved S7 filling-line sequences with start-up and shutdown interlocks, permissives and safe-state behavior to cut downtime.</li>
-          <li>Rationalized alarms across SCADA and PLC logic, cutting nuisance alarms and improving operator response.</li>
-          <li>Authored URS/FRS/SDS documents, ran FAT/SAT with OEMs, and executed OQ scripts for CSV.</li>
-        </ul>
-        <ul class="sys"><li>S7-1500 / TIA Portal</li><li>WinCC Unified</li><li>Profinet · OPC UA</li><li>Vision inspection</li><li>VMware</li></ul>
-      </li>
-      <li>
-        <div class="when">Apr 2023 – Jul 2024</div>
-        <h3>Senior Automation Engineer</h3>
-        <div class="where">Client: Regeneron · New York</div>
-        <ul>
-          <li>Maintained Siemens PLC control of formulation: tank transfers, dosing sequences and material handling.</li>
-          <li>Subject matter expert for washers and sterilizers, restoring cycle readiness for aseptic campaigns.</li>
-          <li>Led site automation standards: PLC naming, alarm philosophy and HMI templates.</li>
-          <li>Mentored junior engineers on PLC diagnostics and GMP documentation.</li>
-        </ul>
-        <ul class="sys"><li>Siemens S7</li><li>WinCC Unified</li><li>PAS-X MES</li><li>Historian</li></ul>
-      </li>
-      <li>
-        <div class="when">Jan 2021 – Mar 2023</div>
-        <h3>Automation Engineer</h3>
-        <div class="where">Client: Pfizer · New York</div>
-        <ul>
-          <li>Front-line troubleshooting for filling and inspection, using watch tables, fault buffers and I/O checks.</li>
-          <li>Integrated inspection-machine signals and verified reject-confirmation and interlock logic.</li>
-          <li>Supported FAT/SAT and IQ/OQ execution under change control.</li>
-        </ul>
-        <ul class="sys"><li>Siemens S7</li><li>WinCC</li><li>Conveyor controls</li><li>FAT/SAT · IQ/OQ</li></ul>
-      </li>
-      <li>
-        <div class="when">Jan 2017 – Nov 2020</div>
-        <h3>Automation Engineer</h3>
-        <div class="where">Dr. Reddy's Laboratories · Hyderabad, India</div>
-        <ul>
-          <li>Supported PLC/SCADA systems for clean utilities: purified water, WFI and clean steam.</li>
-          <li>I/O checkout and commissioning of new instruments, plus backup and recovery readiness for audits.</li>
-        </ul>
-        <ul class="sys"><li>SIMATIC PLC</li><li>WinCC HMI</li><li>PW/WFI · Clean steam</li></ul>
-      </li>
+      <li><h3>Steadier aseptic filling lines</h3><p class="where">Redesigned start-up and shutdown interlocks, equipment permissives and safe-state behavior in S7 PLC logic, cutting downtime and making lines more stable.</p></li>
+      <li><h3>Fewer nuisance alarms, faster operator response</h3><p class="where">Led alarm rationalization across PLC and SCADA, so the alarms left on screen are the ones that need action.</p></li>
+      <li><h3>Inspection that protects product quality</h3><p class="where">Integrated automated vision-inspection machines with line control, including reject verification, accumulation logic and fault handling.</p></li>
+      <li><h3>One standard instead of many</h3><p class="where">Created site automation standards (PLC naming, alarm philosophy, HMI templates) that made systems consistent and easier to support.</p></li>
+      <li><h3>Early warning on clean utilities</h3><p class="where">Brought WFI, purified water, clean steam, nitrogen and compressed-air signals into central SCADA monitoring, so excursions are caught before they reach production.</p></li>
+      <li><h3>Trusted in audits</h3><p class="where">Served as the automation subject matter expert in audits and inspections, presenting validation evidence, change history and access controls.</p></li>
+      <li><h3>Stronger teams</h3><p class="where">Mentored junior engineers in Siemens diagnostics, HMI development and GMP documentation.</p></li>
     </ol>
   </section>
 
