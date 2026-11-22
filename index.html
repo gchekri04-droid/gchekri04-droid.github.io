@@ -8,239 +8,367 @@
 <meta name="description" content="Chekri Gadhiraju: industrial automation for GMP pharmaceutical manufacturing, plus Python and AI tools.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: one column read like a control-system screen — status header, KPIs, a timeline of sites, skill racks, side projects. */
+/* Layout: a control-room HUD. Live signal-network canvas behind one centered column of glass panels. */
 :root {
-  --bg: #f4f7fb; --surface: #ffffff; --line: #d6dee9;
-  --fg: #0f1a2b; --muted: #55657d; --accent: #0a7e93; --accent-soft: #dff3f6; --amber: #a35d00;
-  --display: "Unbounded", "Segoe UI", system-ui, sans-serif;
-  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --bg: #060a14; --bg2: #0b1222; --glass: rgba(17, 27, 48, 0.62); --line: rgba(120, 170, 220, 0.16);
+  --fg: #e6edf7; --muted: #8fa2bd; --cyan: #2ee6f5; --violet: #9b7bff; --amber: #f5b65a; --ok: #46e0a0;
+  --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #0b1120; --surface: #111a2e; --line: #22314d;
-  --fg: #e2e8f0; --muted: #8b9bb4; --accent: #22d3ee; --accent-soft: #0f2a3a; --amber: #f2b45a; color-scheme: dark } }
-:root[data-theme="dark"] {
-  --bg: #0b1120; --surface: #111a2e; --line: #22314d;
-  --fg: #e2e8f0; --muted: #8b9bb4; --accent: #22d3ee; --accent-soft: #0f2a3a; --amber: #f2b45a; color-scheme: dark }
-
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--fg); font: 16px/1.65 var(--body); }
-.wrap { max-width: 820px; margin: 0 auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 3.5rem 4rem; display: grid; gap: 4rem; }
-a { color: var(--accent); text-underline-offset: 3px; }
-a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--fg); font: 16px/1.65 var(--body); overflow-x: hidden; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: rgba(6,10,20,.85); }
+#net { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.vignette { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(1200px 600px at 70% -10%, rgba(46,230,245,.10), transparent 60%),
+              radial-gradient(900px 500px at -10% 30%, rgba(155,123,255,.08), transparent 60%); }
+a { color: var(--cyan); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+
+/* nav */
+nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  background: rgba(6,10,20,.6); border-bottom: 1px solid var(--line); }
+nav .in { max-width: 920px; margin: 0 auto; display: flex; align-items: center; gap: 1.25rem; height: 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.mark { font: 700 1rem var(--display); letter-spacing: .14em; color: var(--fg); text-decoration: none; display: flex; align-items: center; gap: .5rem; white-space: nowrap; }
+.mark i { width: 9px; height: 9px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); animation: pulse 2.6s ease-in-out infinite; }
+nav ul { list-style: none; display: flex; gap: 1.1rem; margin: 0 0 0 auto; padding: 0; overflow-x: auto; scrollbar-width: none; }
+nav ul::-webkit-scrollbar { display: none; }
+nav ul a { font: 500 .8rem var(--mono); color: var(--muted); text-decoration: none; letter-spacing: .06em; white-space: nowrap; transition: color .25s var(--ease); }
+nav ul a:hover, nav ul a.on { color: var(--cyan); }
+
+.wrap { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; display: grid; gap: 5rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 4rem 3rem; }
+section { scroll-margin-top: 80px; }
 h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
-.label { font: 500 0.75rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 1.25rem; }
-p { margin: 0; max-width: 65ch; }
+p { margin: 0; max-width: 68ch; }
+.label { display: flex; align-items: center; gap: .75rem; font: 500 .74rem/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--cyan); margin: 0 0 1.5rem; }
+.label::before { content: ""; width: 28px; height: 1px; background: linear-gradient(90deg, var(--cyan), transparent); }
+.label b { color: var(--muted); font-weight: 400; }
 
-/* header */
-.tag { font: 0.85rem var(--mono); color: var(--muted); margin-bottom: 1.25rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-.tag b { color: var(--accent); font-weight: 500; }
-h1 { font-size: clamp(2.3rem, 8vw, 4.2rem); font-weight: 700; line-height: 1.02; letter-spacing: -0.02em; }
-h1 span { display: block; color: var(--accent); }
-.role { margin-top: 1.25rem; font: 500 1.15rem var(--body); }
-.intro { margin-top: 0.75rem; font-size: 1.05rem; color: var(--muted); }
-.status { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem;
-  font: 0.85rem var(--mono); padding: 0.35rem 0.8rem; border: 1px solid var(--line); border-radius: 999px; }
-.status i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 2.4s ease-in-out infinite; }
-@keyframes pulse { 50% { opacity: 0.35; } }
+/* hero */
+.hero { display: grid; gap: 1.25rem; padding-top: 1rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; font: 500 .8rem var(--mono); color: var(--muted); }
+.chips span { padding: .2rem .55rem; border: 1px solid var(--line); border-radius: 4px; transition: all .5s var(--ease); }
+.chips span.lit { color: var(--bg); background: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 18px rgba(46,230,245,.55); }
+.chips em { font-style: normal; color: #3d5170; }
+h1 { font-size: clamp(2.8rem, 9vw, 5.6rem); font-weight: 700; line-height: .95; letter-spacing: -.01em; }
+h1 .g { display: block; background: linear-gradient(100deg, var(--cyan) 10%, #7df9ff 40%, var(--violet) 95%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; background-size: 200% 100%; animation: sheen 8s ease-in-out infinite; }
+.role { font: 600 1.15rem var(--display); letter-spacing: .04em; color: var(--fg); }
+.intro { font-size: 1.08rem; color: var(--muted); }
+.status { display: inline-flex; align-items: center; gap: .6rem; justify-self: start; font: .82rem var(--mono); padding: .45rem .9rem;
+  border: 1px solid rgba(70,224,160,.35); border-radius: 999px; color: var(--ok); background: rgba(70,224,160,.06); }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 10px var(--ok); animation: pulse 2.2s ease-in-out infinite; }
+.trace { height: 2px; margin-top: .5rem; background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+  background-size: 50% 100%; background-repeat: no-repeat; animation: trace 4.5s linear infinite; opacity: .8; }
 
-/* kpis */
-.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-.kpis div { background: var(--surface); padding: 1rem 1.1rem; min-width: 0; }
-.kpis b { display: block; font: 700 1.6rem/1.1 var(--display); color: var(--accent); font-variant-numeric: tabular-nums; }
-.kpis span { font-size: 0.85rem; color: var(--muted); }
+/* glass */
+.glass { position: relative; background: var(--glass); border: 1px solid var(--line); border-radius: 14px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); overflow: hidden; isolation: isolate;
+  transition: transform .45s var(--ease), border-color .45s var(--ease), box-shadow .45s var(--ease); }
+.glass::after { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .4s var(--ease);
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(46,230,245,.13), transparent 60%); }
+.glass:hover { transform: translateY(-3px); border-color: rgba(46,230,245,.38); box-shadow: 0 18px 40px -20px rgba(46,230,245,.35); }
+.glass:hover::after { opacity: 1; }
 
-/* experience */
-.jobs { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); display: grid; gap: 2.25rem; }
-.jobs > li { position: relative; padding-left: 1.6rem; }
-.jobs h3 + .where { margin-top: 0.25rem; max-width: 65ch; }
-.jobs > li::before { content: ""; position: absolute; left: -7px; top: 0.4rem; width: 12px; height: 12px; border-radius: 50%;
-  background: var(--bg); border: 2px solid var(--accent); }
-.jobs > li.now::before { background: var(--accent); }
-.when { font: 0.82rem var(--mono); color: var(--amber); }
-.jobs h3 { font-size: 1.15rem; margin: 0.2rem 0 0.1rem; }
-.where { color: var(--muted); font-size: 0.95rem; }
-.jobs ul { margin: 0.75rem 0 0; padding-left: 1.1rem; display: grid; gap: 0.35rem; max-width: 65ch; }
-.jobs ul li { color: var(--fg); font-size: 0.95rem; }
-.sys { display: flex; flex-wrap: wrap; gap: 0.4rem; list-style: none; padding: 0; margin: 0.85rem 0 0; }
-.sys li { font: 0.75rem var(--mono); padding: 0.2rem 0.55rem; border: 1px solid var(--line); border-radius: 5px; color: var(--muted); }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; }
+.kpis .glass { padding: 1rem 1.1rem; min-width: 0; }
+.kpis b { display: block; font: 700 1.45rem/1.15 var(--display); color: var(--cyan); }
+.kpis span { font-size: .84rem; color: var(--muted); }
 
-/* skills */
-.racks { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
-.rack { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.2rem; min-width: 0; }
-.rack h3 { font: 600 0.95rem var(--body); margin-bottom: 0.6rem; }
-.rack p { font-size: 0.9rem; color: var(--muted); }
-.rack.learning { border-style: dashed; }
-.rack.learning h3::after { content: " · learning"; font: 400 0.75rem var(--mono); color: var(--amber); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: .9rem; }
+.card { padding: 1.2rem 1.3rem; min-width: 0; }
+.card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: .45rem; display: flex; align-items: center; gap: .5rem; }
+.card h3::before { content: ""; width: 6px; height: 6px; border-radius: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); transform: rotate(45deg); flex: none; }
+.card p { font-size: .93rem; color: var(--muted); }
+.card.learning { border-style: dashed; }
+.card.learning h3::after { content: "learning"; margin-left: auto; font: 500 .68rem var(--mono); letter-spacing: .1em; color: var(--amber);
+  border: 1px solid rgba(245,182,90,.4); padding: .05rem .4rem; border-radius: 4px; }
+
+/* timeline */
+.tl { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 1rem; }
+.tl::before { content: ""; position: absolute; left: 11px; top: 8px; bottom: 8px; width: 2px;
+  background: linear-gradient(var(--cyan), var(--violet) 70%, transparent); opacity: .5; }
+.tl li { position: relative; padding-left: 2.4rem; }
+.tl li::before { content: ""; position: absolute; left: 5px; top: 1.35rem; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--cyan); box-shadow: 0 0 12px rgba(46,230,245,.6); }
+.tl li:first-child::before { background: var(--cyan); animation: pulse 2.2s ease-in-out infinite; }
+.tl .glass { padding: 1rem 1.2rem; }
+.tl h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: .3rem; }
+.tl p { font-size: .93rem; color: var(--muted); }
+.now { font: 500 .68rem var(--mono); letter-spacing: .12em; color: var(--ok); margin-left: .5rem; vertical-align: middle; }
 
 /* projects */
-.project { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-.project + .project { margin-top: 1rem; }
-.project-head { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: baseline; justify-content: space-between; padding: 1.4rem 1.5rem 0; }
-.project h3 { font-size: 1.35rem; }
-.project-body { padding: 0.75rem 1.5rem 1.5rem; display: grid; gap: 1.1rem; }
-.feat { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; }
-.feat div { background: var(--accent-soft); border-radius: 10px; padding: 0.8rem 1rem; min-width: 0; }
-.feat b { display: block; font-weight: 600; margin-bottom: 0.1rem; }
-.feat span { font-size: 0.9rem; color: var(--muted); }
-.term { background: #0b1120; color: #e2e8f0; font: 0.86rem/1.7 var(--mono); padding: 1rem 1.25rem; border-radius: 10px; overflow-x: auto; white-space: pre; margin: 0; }
-.term .k { color: #22d3ee; } .term .u { color: #a78bfa; } .term .c { color: #64748b; }
-.tags { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; padding: 0; margin: 0; }
-.tags li { font: 0.78rem var(--mono); padding: 0.25rem 0.6rem; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); }
+.projects { display: grid; gap: 1.1rem; }
+.project-head { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: baseline; justify-content: space-between; padding: 1.4rem 1.5rem 0; }
+.project h3 { font-size: 1.45rem; font-weight: 700; letter-spacing: .02em; }
+.project h3 a { color: var(--fg); text-decoration: none; transition: color .25s var(--ease); }
+.project h3 a:hover { color: var(--cyan); }
+.project-body { padding: .8rem 1.5rem 1.5rem; display: grid; gap: 1.1rem; }
+.project-body > p { color: var(--muted); }
+.tags { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; padding: 0; margin: 0; }
+.tags li { font: .74rem var(--mono); padding: .2rem .55rem; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); }
+.feat { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .6rem; }
+.feat div { border: 1px solid var(--line); border-radius: 10px; padding: .75rem .9rem; background: rgba(46,230,245,.04); min-width: 0; }
+.feat b { display: block; font-weight: 600; font-size: .95rem; margin-bottom: .1rem; }
+.feat span { font-size: .86rem; color: var(--muted); }
+.term { background: #04070f; border: 1px solid var(--line); color: #dbe6f5; font: .84rem/1.75 var(--mono); padding: 1rem 1.2rem; border-radius: 10px;
+  overflow-x: auto; white-space: pre; margin: 0; position: relative; }
+.term .k { color: var(--cyan); } .term .u { color: var(--violet); } .term .c { color: #5d708c; }
+.note { font-size: .82rem; color: var(--muted); }
 
 /* contact */
-.links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
-.links a { font: 500 0.9rem var(--mono); text-decoration: none; padding: 0.6rem 1rem; border: 1px solid var(--line); border-radius: 8px; color: var(--fg); }
-.links a:hover { border-color: var(--accent); color: var(--accent); }
-footer { font: 0.8rem var(--mono); color: var(--muted); border-top: 1px solid var(--line); padding-top: 1.5rem; }
+.cta { padding: 2rem 1.75rem; display: grid; gap: 1rem; }
+.cta h2 { font-size: clamp(1.5rem, 4vw, 2.1rem); font-weight: 700; }
+.btn { justify-self: start; display: inline-flex; align-items: center; gap: .6rem; font: 600 .92rem var(--mono); text-decoration: none; color: var(--bg);
+  background: var(--cyan); padding: .75rem 1.2rem; border-radius: 8px; box-shadow: 0 0 0 rgba(46,230,245,0);
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -8px rgba(46,230,245,.7); }
+footer { font: .78rem var(--mono); color: #5d708c; border-top: 1px solid var(--line); padding-top: 1.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
 
-@media (max-width: 620px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
-@media (prefers-reduced-motion: reduce) { .status i { animation: none; } }
+/* reveal: content is visible at rest; JS adds a gentle rise for items below the fold */
+.rise { transform: translateY(22px); opacity: .25; transition: transform .8s var(--ease), opacity .8s var(--ease); }
+.rise.in { transform: none; opacity: 1; }
+
+@keyframes pulse { 50% { opacity: .35; } }
+@keyframes sheen { 50% { background-position: 100% 0; } }
+@keyframes trace { from { background-position: -50% 0; } to { background-position: 150% 0; } }
+
+@media (max-width: 680px) { .kpis { grid-template-columns: repeat(2, 1fr); } nav ul { gap: .8rem; } .wrap { gap: 4rem; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .rise { transform: none; opacity: 1; }
+}
 </style>
 </head>
 <body>
 
-<div class="wrap">
+<canvas id="net" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
 
-  <header>
-    <div class="tag"><b>PLC</b> → <b>SCADA</b> → <b>MES</b> → <b>AI</b></div>
-    <h1>Chekri <span>Gadhiraju</span></h1>
+<nav aria-label="Sections">
+  <div class="in">
+    <a class="mark" href="#top"><i aria-hidden="true"></i>CHEKRI.G</a>
+    <ul>
+      <li><a href="#help">Capabilities</a></li>
+      <li><a href="#now">Now</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="wrap" id="top">
+
+  <header class="hero">
+    <div class="chips" aria-label="Automation stack"><span>PLC</span><em>→</em><span>SCADA</span><em>→</em><span>MES</span><em>→</em><span>AI</span></div>
+    <h1>Chekri <span class="g">Gadhiraju</span></h1>
     <p class="role">Industrial automation for GMP pharmaceutical manufacturing</p>
     <p class="intro">I work on the automation behind aseptic pharmaceutical production: PLC and SCADA systems that have to run reliably and stay GMP-compliant. I also build Python and AI tools that turn plant data into clear action.</p>
     <div class="status"><i aria-hidden="true"></i> Open to automation &amp; digital manufacturing work</div>
+    <div class="trace" aria-hidden="true"></div>
   </header>
 
   <section aria-label="Focus areas" class="kpis">
-    <div><b>Aseptic</b><span>filling &amp; inspection</span></div>
-    <div><b>S7-1500</b><span>PLC logic</span></div>
-    <div><b>WinCC</b><span>Unified SCADA/HMI</span></div>
-    <div><b>Part 11</b><span>audit-ready systems</span></div>
+    <div class="glass"><b>Aseptic</b><span>filling &amp; inspection</span></div>
+    <div class="glass"><b>S7-1500</b><span>PLC logic</span></div>
+    <div class="glass"><b>WinCC</b><span>Unified SCADA/HMI</span></div>
+    <div class="glass"><b>Part 11</b><span>audit-ready systems</span></div>
   </section>
 
-  <section aria-labelledby="help">
-    <p class="label" id="help">How I can help</p>
-    <div class="racks">
-      <div class="rack"><h3>Get lines back up fast</h3><p>I trace downtime through PLC diagnostics, SCADA alarms and historian trends to the real root cause, and fix it so it doesn't come back.</p></div>
-      <div class="rack"><h3>Make alarms mean something</h3><p>Alarm rationalization that removes nuisance alarms, so operators see what matters and respond faster.</p></div>
-      <div class="rack"><h3>Stay audit-ready</h3><p>Change control, CSV and IQ/OQ, access reviews and traceable records aligned with 21 CFR Part 11, GAMP 5 and ALCOA+.</p></div>
-      <div class="rack"><h3>Connect floor to IT</h3><p>OPC UA, Profinet, MES/EBR and historian interfaces, with secure, segmented automation networks.</p></div>
-      <div class="rack"><h3>Deliver projects end to end</h3><p>From URS/FRS/SDS through FAT/SAT with OEMs to qualification, planned around production windows.</p></div>
-      <div class="rack learning"><h3>Bring AI to plant data</h3><p>Python tools that turn alarm logs and process data into clear, actionable insight.</p></div>
+  <section id="help" aria-labelledby="help-l">
+    <p class="label" id="help-l">How I can help</p>
+    <div class="grid">
+      <div class="glass card"><h3>Get lines back up fast</h3><p>I trace downtime through PLC diagnostics, SCADA alarms and historian trends to the real root cause, and fix it so it doesn't come back.</p></div>
+      <div class="glass card"><h3>Make alarms mean something</h3><p>Alarm rationalization that removes nuisance alarms, so operators see what matters and respond faster.</p></div>
+      <div class="glass card"><h3>Stay audit-ready</h3><p>Change control, CSV and IQ/OQ, access reviews and traceable records aligned with 21 CFR Part 11, GAMP 5 and ALCOA+.</p></div>
+      <div class="glass card"><h3>Connect floor to IT</h3><p>OPC UA, Profinet, MES/EBR and historian interfaces, with secure, segmented automation networks.</p></div>
+      <div class="glass card"><h3>Deliver projects end to end</h3><p>From URS/FRS/SDS through FAT/SAT with OEMs to qualification, planned around production windows.</p></div>
+      <div class="glass card learning"><h3>Bring AI to plant data</h3><p>Python tools that turn alarm logs and process data into clear, actionable insight.</p></div>
     </div>
   </section>
 
-  <section aria-labelledby="wins">
-    <p class="label" id="wins">What I'm working on</p>
-    <ol class="jobs">
-      <li><h3>IT/OT integration for a new aseptic filling line</h3><p class="where">Supporting a fill/finish expansion that adds new aseptic vial-filling capacity. The work sits between the control systems (PLC, SCADA) and the plant IT network: making automation systems connect correctly and meet GMP requirements before the first batch.</p></li>
-      <li><h3>AlarmLens: an alarm-management analyzer</h3><p class="where">Built and tested a Python tool that scores SCADA alarm logs against ISA-18.2 style benchmarks, finds chattering, stale and flood alarms, measures operator response, and runs as a drag-and-drop Windows app.</p></li>
-      <li><h3>VEXOR: an offline AI assistant</h3><p class="where">Built a voice-enabled desktop assistant on a local language model, then debugged it on real Windows hardware: isolated a frozen-reply fault to the speech engine and replaced it with a separate process.</p></li>
-      <li><h3>A rules-based trading system</h3><p class="where">Backtested a dozen strategies in Python, kept only what the evidence supported, and automated the rest behind hard limits and fail-safe interlocks.</p></li>
-      <li><h3>Hands-on PLC work</h3><p class="where">Completed a six-month PLC project on a food production line during my electronics engineering studies.</p></li>
+  <section id="now" aria-labelledby="now-l">
+    <p class="label" id="now-l">What I'm working on</p>
+    <ol class="tl">
+      <li><div class="glass"><h3>IT/OT integration for a new aseptic filling line <span class="now">● NOW</span></h3><p>Supporting a fill/finish expansion that adds new aseptic vial-filling capacity. The work sits between the control systems (PLC, SCADA) and the plant IT network: making automation systems connect correctly and meet GMP requirements before the first batch.</p></div></li>
+      <li><div class="glass"><h3>AlarmLens: an alarm-management analyzer</h3><p>Built and tested a Python tool that scores SCADA alarm logs against ISA-18.2 style benchmarks, finds chattering, stale and flood alarms, measures operator response, and runs as a drag-and-drop Windows app.</p></div></li>
+      <li><div class="glass"><h3>VEXOR: an offline AI assistant</h3><p>Built a voice-enabled desktop assistant on a local language model, then debugged it on real Windows hardware: isolated a frozen-reply fault to the speech engine and replaced it with a separate process.</p></div></li>
+      <li><div class="glass"><h3>A rules-based trading system</h3><p>Backtested a dozen strategies in Python, kept only what the evidence supported, and automated the rest behind hard limits and fail-safe interlocks.</p></div></li>
+      <li><div class="glass"><h3>Hands-on PLC work</h3><p>Completed a six-month PLC project on a food production line during my electronics engineering studies.</p></div></li>
     </ol>
   </section>
 
-  <section aria-labelledby="sk">
-    <p class="label" id="sk">Skills</p>
-    <div class="racks">
-      <div class="rack"><h3>PLC systems</h3><p>Siemens S7-1500/S7-1200 (TIA Portal), SIMATIC, Allen-Bradley ControlLogix. Sequence control and troubleshooting.</p></div>
-      <div class="rack"><h3>SCADA / HMI</h3><p>WinCC Unified and Professional, Ignition, iFIX. Alarm management, role-based access, audit trails.</p></div>
-      <div class="rack"><h3>Aseptic processes</h3><p>Formulation, wash and sterilization, filling lines, vision inspection, material handling, clean utilities.</p></div>
-      <div class="rack"><h3>Integration</h3><p>Profinet, EtherNet/IP, OPC UA/DA, MES/EBR interfaces, historians, VMware-hosted SCADA.</p></div>
-      <div class="rack"><h3>Validation &amp; compliance</h3><p>URS/FRS/SDS, FAT/SAT, IQ/OQ, GAMP 5, 21 CFR Part 11, ALCOA+ data integrity.</p></div>
-      <div class="rack learning"><h3>Software &amp; AI</h3><p>Python, pandas, backtesting, AI agents and automation, Git and GitHub, local LLMs with Ollama, HTML and CSS.</p></div>
+  <section id="skills" aria-labelledby="skills-l">
+    <p class="label" id="skills-l">Skills</p>
+    <div class="grid">
+      <div class="glass card"><h3>PLC systems</h3><p>Siemens S7-1500/S7-1200 (TIA Portal), SIMATIC, Allen-Bradley ControlLogix. Sequence control and troubleshooting.</p></div>
+      <div class="glass card"><h3>SCADA / HMI</h3><p>WinCC Unified and Professional, Ignition, iFIX. Alarm management, role-based access, audit trails.</p></div>
+      <div class="glass card"><h3>Aseptic processes</h3><p>Formulation, wash and sterilization, filling lines, vision inspection, material handling, clean utilities.</p></div>
+      <div class="glass card"><h3>Integration</h3><p>Profinet, EtherNet/IP, OPC UA/DA, MES/EBR interfaces, historians, VMware-hosted SCADA.</p></div>
+      <div class="glass card"><h3>Validation &amp; compliance</h3><p>URS/FRS/SDS, FAT/SAT, IQ/OQ, GAMP 5, 21 CFR Part 11, ALCOA+ data integrity.</p></div>
+      <div class="glass card learning"><h3>Software &amp; AI</h3><p>Python, pandas, backtesting, AI agents and automation, Git and GitHub, local LLMs with Ollama, HTML and CSS.</p></div>
     </div>
   </section>
 
-  <section aria-labelledby="proj">
-    <p class="label" id="proj">Side projects</p>
-    <article class="project">
-      <div class="project-head">
-        <h3><a href="https://github.com/gchekri04-droid/alarmlens" target="_blank" rel="noopener">AlarmLens ↗</a></h3>
-        <ul class="tags" aria-label="Built with"><li>Python</li><li>pandas</li><li>ISA-18.2</li><li>Ollama</li></ul>
-      </div>
-      <div class="project-body">
-        <p>An alarm-management analyzer for SCADA alarm logs. It reads a CSV export and measures the alarm system against ISA-18.2 / EEMUA 191 style benchmarks. The one-page report shows bad actors, chattering and stale alarms, flood episodes and the priority mix, with prioritized rationalization actions. An optional summary comes from an offline AI model, so no plant data leaves the PC.</p>
-        <div class="feat">
-          <div><b>8 alarm KPIs</b><span>Alarms per day and per 10 min, time in flood, top-10 share, more</span></div>
-          <div><b>Finds bad actors</b><span>Chattering, stale and flood-causing tags</span></div>
-          <div><b>Operator response</b><span>Time to acknowledge, and the alarms operators ignore</span></div>
-          <div><b>Drop and analyze</b><span>Drag in any SCADA CSV export; columns are auto-detected</span></div>
+  <section id="projects" aria-labelledby="proj-l">
+    <p class="label" id="proj-l">Projects</p>
+    <div class="projects">
+      <article class="glass project">
+        <div class="project-head">
+          <h3><a href="https://github.com/gchekri04-droid/alarmlens" target="_blank" rel="noopener">AlarmLens ↗</a></h3>
+          <ul class="tags" aria-label="Built with"><li>Python</li><li>pandas</li><li>ISA-18.2</li><li>Ollama</li></ul>
         </div>
+        <div class="project-body">
+          <p>An alarm-management analyzer for SCADA alarm logs. It reads a CSV export and measures the alarm system against ISA-18.2 / EEMUA 191 style benchmarks. The one-page report shows bad actors, chattering and stale alarms, flood episodes and the priority mix, with prioritized rationalization actions. An optional summary comes from an offline AI model, so no plant data leaves the PC.</p>
+          <div class="feat">
+            <div><b>8 alarm KPIs</b><span>Alarms per day and per 10 min, time in flood, top-10 share, more</span></div>
+            <div><b>Finds bad actors</b><span>Chattering, stale and flood-causing tags</span></div>
+            <div><b>Operator response</b><span>Time to acknowledge, and the alarms operators ignore</span></div>
+            <div><b>Drop and analyze</b><span>Drag in any SCADA CSV export; columns are auto-detected</span></div>
+          </div>
 <pre class="term" aria-label="Example AlarmLens run on sample data"><span class="c"># fictional 7-day log from a filling line</span>
 <span class="u">&gt;</span> python -m alarmlens alarm_log_sample.csv
   [WARN] Alarms per day          216
   [BAD ] Peak in 10 min           61
   [BAD ] Chattering alarms         6
   [OK  ] Stale alarms              1</pre>
-      </div>
-    </article>
-    <article class="project">
-      <div class="project-head">
-        <h3>Rules-Based Trading Desk</h3>
-        <ul class="tags" aria-label="Built with"><li>Python</li><li>Backtesting</li><li>AI agent</li><li>Brokerage API</li></ul>
-      </div>
-      <div class="project-body">
-        <p>A personal trading system run like a control system. Every strategy is tested on historical prices before it's allowed to run, a scheduled AI agent follows fixed rules each market day, and hard interlocks stop it from doing anything outside those rules. Every trade is logged to a journal.</p>
-        <div class="feat">
-          <div><b>Evidence first</b><span>Python backtests of about a dozen strategies on about 2 years of daily data</span></div>
-          <div><b>Hard interlocks</b><span>Position, order and sector limits, an earnings blackout, and a review check before every order</span></div>
-          <div><b>Automated daily run</b><span>Reads state, applies the rules, logs each trade and sends a plain-language summary</span></div>
-          <div><b>Fail safe</b><span>Anything unclear or unexpected means no order, and it gets reported</span></div>
         </div>
+      </article>
+      <article class="glass project">
+        <div class="project-head">
+          <h3><a href="https://github.com/gchekri04-droid/vexor" target="_blank" rel="noopener">VEXOR ↗</a></h3>
+          <ul class="tags" aria-label="Built with"><li>Python</li><li>Tkinter</li><li>Ollama</li><li>Llama 3.2</li></ul>
+        </div>
+        <div class="project-body">
+          <p>A free desktop AI assistant for Windows. It runs a local language model, so it works offline with no API costs, and it handles voice, PC commands and Git help.</p>
+          <div class="feat">
+            <div><b>Offline AI</b><span>Local Llama model through Ollama</span></div>
+            <div><b>Voice in &amp; out</b><span>Push-to-talk, spoken replies</span></div>
+            <div><b>PC control</b><span>Apps, folders, sites, web search</span></div>
+            <div><b>Git helper</b><span>Writes commit messages from diffs</span></div>
+          </div>
+<pre class="term" aria-label="Example VEXOR session"><span class="u">You:</span> what is OPC UA?
+<span class="k">VEXOR:</span> An open, secure standard for industrial data exchange.
+       It lets PLCs, SCADA and MES share tags and alarms.
+<span class="u">You:</span> commit message
+<span class="k">VEXOR:</span> Add alarm filter to HMI export script  <span class="c"># copied ✓</span></pre>
+        </div>
+      </article>
+      <article class="glass project">
+        <div class="project-head">
+          <h3>Rules-Based Trading Desk</h3>
+          <ul class="tags" aria-label="Built with"><li>Python</li><li>Backtesting</li><li>AI agent</li><li>Brokerage API</li></ul>
+        </div>
+        <div class="project-body">
+          <p>A personal trading system run like a control system. Every strategy is tested on historical prices before it's allowed to run, a scheduled AI agent follows fixed rules each market day, and hard interlocks stop it from doing anything outside those rules. Every trade is logged to a journal.</p>
+          <div class="feat">
+            <div><b>Evidence first</b><span>Python backtests of about a dozen strategies on about 2 years of daily data</span></div>
+            <div><b>Hard interlocks</b><span>Position, order and sector limits, an earnings blackout, and a review check before every order</span></div>
+            <div><b>Automated daily run</b><span>Reads state, applies the rules, logs each trade and sends a plain-language summary</span></div>
+            <div><b>Fail safe</b><span>Anything unclear or unexpected means no order, and it gets reported</span></div>
+          </div>
 <pre class="term" aria-label="Backtest findings"><span class="c"># what the backtests showed (daily data, ~2 years)</span>
 <span class="k">kept</span>      Bollinger-band and RSI(2) dip-buys on steady large caps
 <span class="k">kept</span>      20-day breakouts above the 50/200-day averages
 <span class="u">rejected</span>  opening-range day trading: lost money in all 8 variants
 <span class="u">rejected</span>  golden cross, MACD cross, turn-of-month, IBS
 <span class="c"># buy-and-hold beat active trading on every stock tested</span></pre>
-        <p class="where">A personal research project, not financial advice.</p>
-      </div>
-    </article>
-    <article class="project">
-      <div class="project-head">
-        <h3><a href="https://github.com/gchekri04-droid/vexor" target="_blank" rel="noopener">VEXOR ↗</a></h3>
-        <ul class="tags" aria-label="Built with"><li>Python</li><li>Tkinter</li><li>Ollama</li><li>Llama 3.2</li></ul>
-      </div>
-      <div class="project-body">
-        <p>A free desktop AI assistant for Windows. It runs a local language model, so it works offline with no API costs, and it handles voice, PC commands and Git help.</p>
-        <div class="feat">
-          <div><b>Offline AI</b><span>Local Llama model through Ollama</span></div>
-          <div><b>Voice in &amp; out</b><span>Push-to-talk, spoken replies</span></div>
-          <div><b>PC control</b><span>Apps, folders, sites, web search</span></div>
-          <div><b>Git helper</b><span>Writes commit messages from diffs</span></div>
+          <p class="note">A personal research project, not financial advice.</p>
         </div>
-<pre class="term" aria-label="Example VEXOR session"><span class="u">You:</span> what is OPC UA?
-<span class="k">VEXOR:</span> An open, secure standard for industrial data exchange.
-       It lets PLCs, SCADA and MES share tags and alarms.
-<span class="u">You:</span> commit message
-<span class="k">VEXOR:</span> Add alarm filter to HMI export script  <span class="c"># copied ✓</span></pre>
-      </div>
-    </article>
-    <article class="project">
-      <div class="project-head">
-        <h3>Developer Starter Kit</h3>
-        <ul class="tags" aria-label="Built with"><li>Batch</li><li>winget</li></ul>
-      </div>
-      <div class="project-body">
-        <p>A one-click Windows setup that installs Git, VS Code, GitHub CLI and PowerToys, downloads a practice repository and opens a learning path. It applies the commissioning mindset to a developer workstation: a repeatable install with documented steps.</p>
-      </div>
-    </article>
-  </section>
-
-  <section aria-labelledby="ct">
-    <p class="label" id="ct">Contact</p>
-    <p>Open to conversations about pharmaceutical automation, digital manufacturing, and where AI fits on the plant floor.</p>
-    <div class="links">
-      <a href="https://github.com/gchekri04-droid" target="_blank" rel="noopener">github.com/gchekri04-droid ↗</a>
+      </article>
+      <article class="glass project">
+        <div class="project-head">
+          <h3>Developer Starter Kit</h3>
+          <ul class="tags" aria-label="Built with"><li>Batch</li><li>winget</li></ul>
+        </div>
+        <div class="project-body">
+          <p>A one-click Windows setup that installs Git, VS Code, GitHub CLI and PowerToys, downloads a practice repository and opens a learning path. It applies the commissioning mindset to a developer workstation: a repeatable install with documented steps.</p>
+        </div>
+      </article>
     </div>
   </section>
 
-  <footer>© 2026 Chekri Gadhiraju · Built with HTML &amp; CSS · Hosted on GitHub Pages</footer>
+  <section id="contact" aria-labelledby="ct-l">
+    <div class="glass cta">
+      <p class="label" id="ct-l">Contact</p>
+      <h2>Let's connect the plant floor to what's next.</h2>
+      <p class="intro">Open to conversations about pharmaceutical automation, digital manufacturing, and where AI fits on the plant floor.</p>
+      <a class="btn" href="https://github.com/gchekri04-droid" target="_blank" rel="noopener">github.com/gchekri04-droid ↗</a>
+    </div>
+  </section>
+
+  <footer><span>© 2026 Chekri Gadhiraju</span><span>HTML · CSS · Canvas · Hosted on GitHub Pages</span></footer>
 </div>
+
+<script>
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* signal network background */
+  const cv = document.getElementById("net"), ctx = cv.getContext("2d");
+  let W = 0, H = 0, dpr = 1, pts = [], raf = 0;
+  function size() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.width = innerWidth * dpr; H = cv.height = innerHeight * dpr;
+    const n = Math.round(Math.min(70, (innerWidth * innerHeight) / 22000));
+    pts = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - .5) * .25 * dpr, vy: (Math.random() - .5) * .25 * dpr, p: Math.random() * 6.28 }));
+  }
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    const R = 150 * dpr;
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i];
+      if (!reduce) { a.x += a.vx; a.y += a.vy; if (a.x < 0 || a.x > W) a.vx *= -1; if (a.y < 0 || a.y > H) a.vy *= -1; }
+      for (let j = i + 1; j < pts.length; j++) {
+        const b = pts[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.hypot(dx, dy);
+        if (d < R) { ctx.strokeStyle = `rgba(46,230,245,${(1 - d / R) * 0.16})`; ctx.lineWidth = dpr; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+      }
+      const glow = .45 + .35 * Math.sin((t || 0) / 900 + a.p);
+      ctx.fillStyle = `rgba(125,249,255,${glow})`; ctx.beginPath(); ctx.arc(a.x, a.y, 1.6 * dpr, 0, 6.28); ctx.fill();
+    }
+    if (!reduce) raf = requestAnimationFrame(draw);
+  }
+  size(); draw(0);
+  addEventListener("resize", () => { cancelAnimationFrame(raf); size(); draw(0); });
+  document.addEventListener("visibilitychange", () => { cancelAnimationFrame(raf); if (!document.hidden) draw(performance.now()); });
+
+  /* cycling stack chips */
+  const chips = [...document.querySelectorAll(".chips span")]; let ci = 0;
+  const lightChip = () => { chips.forEach((c, i) => c.classList.toggle("lit", i === ci)); ci = (ci + 1) % chips.length; };
+  lightChip(); if (!reduce) setInterval(lightChip, 1600);
+
+  /* cursor glow on glass panels */
+  document.querySelectorAll(".glass").forEach(el => el.addEventListener("pointermove", e => {
+    const r = el.getBoundingClientRect(); el.style.setProperty("--mx", (e.clientX - r.left) + "px"); el.style.setProperty("--my", (e.clientY - r.top) + "px");
+  }));
+
+  /* gentle rise for items below the first screen (everything is visible without JS) */
+  if (!reduce && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".wrap section, .tl li, .projects .project").forEach(el => {
+      if (el.getBoundingClientRect().top > innerHeight) { el.classList.add("rise"); io.observe(el); }
+    });
+  }
+
+  /* highlight the nav link for the section in view */
+  const links = [...document.querySelectorAll("nav ul a")];
+  const map = new Map(links.map(a => [a.getAttribute("href").slice(1), a]));
+  if ("IntersectionObserver" in window) {
+    const so = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { links.forEach(l => l.classList.remove("on")); map.get(e.target.id)?.classList.add("on"); } }), { rootMargin: "-45% 0px -50% 0px" });
+    map.forEach((_, id) => { const s = document.getElementById(id); if (s) so.observe(s); });
+  }
+})();
+</script>
 </body>
 </html>
