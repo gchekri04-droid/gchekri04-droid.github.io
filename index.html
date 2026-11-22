@@ -154,7 +154,7 @@ footer { font: 0.8rem var(--mono); color: var(--muted); border-top: 1px solid va
       <div class="rack"><h3>Aseptic processes</h3><p>Formulation, wash and sterilization, filling lines, vision inspection, material handling, clean utilities.</p></div>
       <div class="rack"><h3>Integration</h3><p>Profinet, EtherNet/IP, OPC UA/DA, MES/EBR interfaces, historians, VMware-hosted SCADA.</p></div>
       <div class="rack"><h3>Validation &amp; compliance</h3><p>URS/FRS/SDS, FAT/SAT, IQ/OQ, GAMP 5, 21 CFR Part 11, ALCOA+ data integrity.</p></div>
-      <div class="rack learning"><h3>Software &amp; AI</h3><p>Python, Git and GitHub, local LLMs with Ollama, HTML and CSS.</p></div>
+      <div class="rack learning"><h3>Software &amp; AI</h3><p>Python, pandas, backtesting, AI agents and automation, Git and GitHub, local LLMs with Ollama, HTML and CSS.</p></div>
     </div>
   </section>
 
@@ -179,6 +179,28 @@ footer { font: 0.8rem var(--mono); color: var(--muted); border-top: 1px solid va
   [BAD ] Peak in 10 min           61
   [BAD ] Chattering alarms         6
   [OK  ] Stale alarms              1</pre>
+      </div>
+    </article>
+    <article class="project">
+      <div class="project-head">
+        <h3>Rules-Based Trading Desk</h3>
+        <ul class="tags" aria-label="Built with"><li>Python</li><li>Backtesting</li><li>AI agent</li><li>Brokerage API</li></ul>
+      </div>
+      <div class="project-body">
+        <p>A personal trading system run like a control system. Every strategy is tested on historical prices before it's allowed to run, a scheduled AI agent follows fixed rules each market day, and hard interlocks stop it from doing anything outside those rules. Every trade is logged to a journal.</p>
+        <div class="feat">
+          <div><b>Evidence first</b><span>Python backtests of about a dozen strategies on about 2 years of daily data</span></div>
+          <div><b>Hard interlocks</b><span>Position, order and sector limits, an earnings blackout, and a review check before every order</span></div>
+          <div><b>Automated daily run</b><span>Reads state, applies the rules, logs each trade and sends a plain-language summary</span></div>
+          <div><b>Fail safe</b><span>Anything unclear or unexpected means no order, and it gets reported</span></div>
+        </div>
+<pre class="term" aria-label="Backtest findings"><span class="c"># what the backtests showed (daily data, ~2 years)</span>
+<span class="k">kept</span>      Bollinger-band and RSI(2) dip-buys on steady large caps
+<span class="k">kept</span>      20-day breakouts above the 50/200-day averages
+<span class="u">rejected</span>  opening-range day trading: lost money in all 8 variants
+<span class="u">rejected</span>  golden cross, MACD cross, turn-of-month, IBS
+<span class="c"># buy-and-hold beat active trading on every stock tested</span></pre>
+        <p class="where">A personal research project, not financial advice.</p>
       </div>
     </article>
     <article class="project">
